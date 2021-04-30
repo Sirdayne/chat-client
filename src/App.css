@@ -1,0 +1,53 @@
+.App {
+  width: 100%;
+}
+
+.register {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 120px;
+}
+
+.register__label {
+  margin-top: 10px;
+}
+
+.register__btn {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.chat {
+  display: flex;
+  justify-content: center;
+}
+
+.chat-container {
+  max-width: 800px;
+  width: 100%;
+}
+
+.chat-inner {
+  margin-top: 150px;
+  height: 300px;
+  border: 1px solid #323232;
+  box-sizing: border-box;
+  padding: 5px;
+  overflow-y: auto;
+}
+
+.chat-input {
+  margin-top: 50px;
+  max-width: 800px;
+  width: 100%;
+}
+
+.chat-input input {
+  width: calc(100% - 65px);
+}
+
+.chat__message__author {
+  font-weight: bold;
+}
