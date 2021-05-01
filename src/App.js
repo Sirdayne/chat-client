@@ -15,24 +15,26 @@ import {
 
 function App() {
 
-    const [redirect, setRedirect] = useState(false);
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(getCurrentUser, [])
 
     function getCurrentUser() {
+        setLoading(true)
         http.get('current-user').then(res => {
             console.log(res, ' current-user');
+            if (res && res.data) {
+                setUser(res.data)
+            }
         }).catch(err => {
             if (err) {
+                setUser(null)
                 auth.resetToken()
-                setRedirect(true)
             }
+        }).finally(() => {
+            setLoading(false)
         })
-    }
-
-    function renderRedirect() {
-        setRedirect(false)
-        return <Redirect to="/login" push={true}/>
     }
 
     return (
@@ -40,15 +42,14 @@ function App() {
             <Router>
                 <Switch>
                     <Route path="/login">
-                        <Login/>
+                        <Login getCurrentUser={getCurrentUser}/>
                     </Route>
                     <Route path="/register">
                         <Register/>
                     </Route>
-                    <PrivateRoute path="/">
-                        <Chat/>
-                    </PrivateRoute>
-                    { redirect && renderRedirect() }
+                    {!loading && <PrivateRoute path="/" user={user}>
+                        <Chat user={user}/>
+                    </PrivateRoute>}
                 </Switch>
             </Router>
         </div>

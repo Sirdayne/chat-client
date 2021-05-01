@@ -1,13 +1,48 @@
-import {useState} from 'react'
+import {useState, useEffect, useRef} from 'react'
 
-export default function Chat() {
-    const [message, setMessage] = useState('')
+export default function Chat(props) {
+    const [inputValue, setInputValue] = useState('')
     const [messages, setMessages] = useState([])
+    const socket = useRef()
 
     function sendMessage() {
-        setMessages([...messages, message])
-        setMessage('')
+        const msg = {
+            email: props.user.email,
+            message: inputValue,
+            date: Date.now(),
+            event: 'message'
+        }
+        socket.current.send(JSON.stringify(msg))
+        setInputValue('')
     }
+
+    useEffect(() => {
+        if (props.user && props.user.email) {
+            socket.current = new WebSocket('ws://localhost:5000')
+
+            socket.current.onopen = () => {
+                const msg = {
+                    event: 'connection',
+                    email: props.user.email,
+                    date: Date.now()
+                }
+                socket.current.send(JSON.stringify(msg))
+            }
+
+            socket.current.onmessage = (event) => {
+                const msg = JSON.parse(event.data)
+                setMessages(prev => [msg, ...prev])
+            }
+
+            socket.current.onclose = () => {
+
+            }
+
+            socket.current.onerror = () => {
+
+            }
+        }
+    }, [])
 
     return (
         <div className="chat">
@@ -15,17 +50,22 @@ export default function Chat() {
                 <div className="chat-inner">
                     {messages.map((msg) =>
                     <div className="chat__message"
-                         key={msg}>
-                         <span className="chat__message__author">Author: </span>
-                         {msg}
+                         key={msg.date}>
+                        <span className="chat__message__time">
+                            [{new Date(parseInt(msg.date)).getHours()}:{new Date(parseInt(msg.date)).getMinutes()}]
+                        </span>
+                        {
+                            msg.event === 'connection' ? <span><span className="chat__message__author">{msg.email}</span> entered chat!</span>
+                            : <span><span className="chat__message__author">{msg.email}: </span>{msg.message}</span>
+                        }
                     </div>)}
                 </div>
                 <div className="chat-input">
-                    <input value={message}
-                           onChange={e => {setMessage(e.target.value)}}
+                    <input value={inputValue}
+                           onChange={e => {setInputValue(e.target.value)}}
                            type="text"/>
                     <button className="btn"
-                            disabled={message.length === 0 || message.length > 100}
+                            disabled={inputValue.length === 0 || inputValue.length > 100}
                             onClick={(e) => sendMessage()}>SEND</button>
                 </div>
             </div>

@@ -30,6 +30,8 @@
 }
 
 .chat-inner {
+  display: flex;
+  flex-direction: column-reverse;
   margin-top: 150px;
   height: 300px;
   border: 1px solid #323232;
@@ -50,4 +52,8 @@
 
 .chat__message__author {
   font-weight: bold;
+}
+
+.chat__message__time {
+  margin-right: 5px;
 }
