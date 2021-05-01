@@ -1,8 +1,8 @@
 import {useState} from 'react'
 import {validateEmail} from "../services/utils";
-import http from "../services/http";
 import auth from "../services/auth";
 import { Redirect } from "react-router-dom";
+import httpAuth from '../services/httpAuth';
 
 export default function Register() {
     const [email, setEmail] = useState('')
@@ -10,25 +10,24 @@ export default function Register() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [touched, setTouched] = useState(false);
     const [redirect, setRedirect] = useState(false);
-    const maxPasswordLength = 6;
+    const maxPasswordLength = 5;
 
     function register() {
-        if (!isValid) {
-            return
-        }
         setTouched(true)
-        const body = {
-            email, password
+        if (isValid()) {
+            const body = {
+                email, password
+            }
+            httpAuth.post('register', body).then(res => {
+                const { token } = res.data
+                auth.setToken(token)
+                setRedirect(true)
+            })
         }
-        http.post('register', body).then(res => {
-            const { token } = res.data
-            auth.setToken(token)
-            setRedirect(true)
-        })
     }
 
     function isValid() {
-        return !validateEmail(email) || password.length < maxPasswordLength || password !== confirmPassword
+        return validateEmail(email) && password.length >= maxPasswordLength && password === confirmPassword
     }
 
     return (

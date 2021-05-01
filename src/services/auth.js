@@ -8,6 +8,9 @@ const auth = {
     },
     isLoggedIn() {
         return !!this.getToken()
+    },
+    resetToken() {
+        localStorage.clear()
     }
 }
 

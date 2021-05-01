@@ -1,6 +1,6 @@
 import {useState} from 'react'
 import {validateEmail} from '../services/utils';
-import http from '../services/http';
+import httpAuth from '../services/httpAuth';
 import auth from '../services/auth';
 import { Redirect } from "react-router-dom";
 
@@ -11,22 +11,21 @@ export default function Login() {
     const [redirect, setRedirect] = useState(false);
 
     function login() {
-        if (!isValid) {
-            return
-        }
         setTouched(true)
-        const body = {
-            email, password
+        if (isValid()) {
+            const body = {
+                email, password
+            }
+            httpAuth.post('login', body).then(res => {
+                const { token } = res.data
+                auth.setToken(token)
+                setRedirect(true)
+            })
         }
-        http.post('login', body).then(res => {
-            const { token } = res.data
-            auth.setToken(token)
-            setRedirect(true)
-        })
     }
 
     function isValid() {
-        return !validateEmail(email)
+        return validateEmail(email)
     }
 
     return (
