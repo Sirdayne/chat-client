@@ -23,7 +23,6 @@ function App() {
     function getCurrentUser() {
         setLoading(true)
         http.get('current-user').then(res => {
-            console.log(res, ' current-user');
             if (res && res.data) {
                 setUser(res.data)
             }

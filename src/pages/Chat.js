@@ -17,7 +17,6 @@ export default function Chat({ user }) {
     }
 
     useEffect(() => {
-        console.log(user, ' USER ');
         if (user && user.email) {
             socket.current = new WebSocket('ws://localhost:5000')
 
