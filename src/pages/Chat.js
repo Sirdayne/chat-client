@@ -18,7 +18,7 @@ export default function Chat({ user }) {
 
     useEffect(() => {
         if (user && user.email) {
-            socket.current = new WebSocket('ws://localhost:5000')
+            socket.current = new WebSocket(process.env.REACT_APP_WS)
 
             socket.current.onopen = () => {
                 const msg = {
