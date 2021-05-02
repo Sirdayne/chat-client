@@ -42,12 +42,12 @@ function App() {
             <Router>
                 <Switch>
                     <Route path="/login">
-                        <Login getCurrentUser={getCurrentUser}/>
+                        <Login setUser={setUser}/>
                     </Route>
                     <Route path="/register">
-                        <Register/>
+                        <Register setUser={setUser}/>
                     </Route>
-                    {!loading && <PrivateRoute path="/" user={user}>
+                    {!loading && <PrivateRoute path="/">
                         <Chat user={user}/>
                     </PrivateRoute>}
                 </Switch>

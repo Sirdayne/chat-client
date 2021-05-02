@@ -1,13 +1,13 @@
 import {useState, useEffect, useRef} from 'react'
 
-export default function Chat(props) {
+export default function Chat({ user }) {
     const [inputValue, setInputValue] = useState('')
     const [messages, setMessages] = useState([])
     const socket = useRef()
 
     function sendMessage() {
         const msg = {
-            email: props.user.email,
+            email: user.email,
             message: inputValue,
             date: Date.now(),
             event: 'message'
@@ -17,13 +17,14 @@ export default function Chat(props) {
     }
 
     useEffect(() => {
-        if (props.user && props.user.email) {
+        console.log(user, ' USER ');
+        if (user && user.email) {
             socket.current = new WebSocket('ws://localhost:5000')
 
             socket.current.onopen = () => {
                 const msg = {
                     event: 'connection',
-                    email: props.user.email,
+                    email: user.email,
                     date: Date.now()
                 }
                 socket.current.send(JSON.stringify(msg))
@@ -42,7 +43,7 @@ export default function Chat(props) {
 
             }
         }
-    }, [])
+    }, [user])
 
     return (
         <div className="chat">

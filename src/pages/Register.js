@@ -4,7 +4,7 @@ import auth from "../services/auth";
 import { Redirect } from "react-router-dom";
 import httpAuth from '../services/httpAuth';
 
-export default function Register() {
+export default function Register({ setUser }) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -21,6 +21,7 @@ export default function Register() {
             httpAuth.post('register', body).then(res => {
                 const { token } = res.data
                 auth.setToken(token)
+                setUser({ email})
                 setRedirect(true)
             })
         }
