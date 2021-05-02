@@ -1,2 +1,2 @@
 # chat-client
-chat client on React
+chat client on React hooks
