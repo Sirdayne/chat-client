@@ -34,7 +34,6 @@ export default function Chat({ user }) {
                 if (msg.event === 'get-all-messages') {
                     setMessages([...msg.messages])
                 } else {
-                    console.log(msg, ' ! message !')
                     setMessages(prev => [msg, ...prev])
                 }
             }
@@ -57,7 +56,7 @@ export default function Chat({ user }) {
                     <div className="chat__message"
                          key={msg.id}>
                         <span className="chat__message__time">
-                            [{new Date(msg.created_at).toTimeString().split(' ')[0]}]
+                            [{new Date(msg.created_at).toTimeString().slice(0, 5)}]
                         </span>
                         {
                             msg.event === 'connection' ? <span><span className="chat__message__author">{msg.email}</span> entered chat!</span>

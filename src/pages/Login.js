@@ -5,7 +5,7 @@ import auth from '../services/auth';
 import { Redirect } from "react-router-dom";
 
 export default function Login({ setUser }) {
-    const [email, setEmail] = useState('')
+    const [formEmail, setFormEmail] = useState('')
     const [password, setPassword] = useState('');
     const [touched, setTouched] = useState(false);
     const [redirect, setRedirect] = useState(false);
@@ -14,19 +14,19 @@ export default function Login({ setUser }) {
         setTouched(true)
         if (isValid()) {
             const body = {
-                email, password
+                email: formEmail, password
             }
             httpAuth.post('login', body).then(res => {
-                const { token } = res.data
+                const { token, id, email, role } = res.data
                 auth.setToken(token)
-                setUser({ email })
+                setUser({ id, email, role })
                 setRedirect(true)
             })
         }
     }
 
     function isValid() {
-        return validateEmail(email)
+        return validateEmail(formEmail)
     }
 
     return (
@@ -34,8 +34,8 @@ export default function Login({ setUser }) {
         : <div className="register">
             <div>
                 <div className="register__label">Email</div>
-                <input value={email}
-                       onChange={e => {setEmail(e.target.value)}}
+                <input value={formEmail}
+                       onChange={e => {setFormEmail(e.target.value)}}
                        type='email'
                 />
                 <div className="register__label">Password</div>
@@ -45,7 +45,7 @@ export default function Login({ setUser }) {
                 />
 
                 {touched && <div className="errors">
-                    <div>{!validateEmail(email) && <span>Email is not valid</span>}</div>
+                    <div>{!validateEmail(formEmail) && <span>Email is not valid</span>}</div>
                 </div>}
 
                 <div className="register__btn">

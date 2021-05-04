@@ -5,7 +5,7 @@ import { Redirect } from "react-router-dom";
 import httpAuth from '../services/httpAuth';
 
 export default function Register({ setUser }) {
-    const [email, setEmail] = useState('')
+    const [formEmail, setFormEmail] = useState('')
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [touched, setTouched] = useState(false);
@@ -16,19 +16,19 @@ export default function Register({ setUser }) {
         setTouched(true)
         if (isValid()) {
             const body = {
-                email, password
+                email: formEmail, password
             }
             httpAuth.post('register', body).then(res => {
-                const { token, id, userEmail } = res.data
+                const { token, id, email, role } = res.data
                 auth.setToken(token)
-                setUser({ id, email: userEmail })
+                setUser({ id, email: email, role })
                 setRedirect(true)
             })
         }
     }
 
     function isValid() {
-        return validateEmail(email) && password.length >= maxPasswordLength && password === confirmPassword
+        return validateEmail(formEmail) && password.length >= maxPasswordLength && password === confirmPassword
     }
 
     return (
@@ -36,8 +36,8 @@ export default function Register({ setUser }) {
         : <div className="register">
             <div>
                 <div className="register__label">Email</div>
-                <input value={email}
-                       onChange={e => {setEmail(e.target.value)}}
+                <input value={formEmail}
+                       onChange={e => {setFormEmail(e.target.value)}}
                        type='email'
                 />
                 <div className="register__label">Password</div>
@@ -52,7 +52,7 @@ export default function Register({ setUser }) {
                 />
 
                 {touched && <div className="errors">
-                    <div>{!validateEmail(email) && <span>Email is not valid</span>}</div>
+                    <div>{!validateEmail(formEmail) && <span>Email is not valid</span>}</div>
                     <div>{password.length < maxPasswordLength && <span>Password length must be greater than {maxPasswordLength}</span>}</div>
                     <div>{password !== confirmPassword && <span>Passwords do not match</span>}</div>
                 </div>}
