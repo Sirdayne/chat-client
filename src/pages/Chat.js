@@ -7,10 +7,10 @@ export default function Chat({ user }) {
 
     function sendMessage() {
         const msg = {
+            event: 'message',
+            user_id: user.id,
             email: user.email,
             message: inputValue,
-            date: Date.now(),
-            event: 'message'
         }
         socket.current.send(JSON.stringify(msg))
         setInputValue('')
@@ -23,15 +23,20 @@ export default function Chat({ user }) {
             socket.current.onopen = () => {
                 const msg = {
                     event: 'connection',
+                    user_id: user.id,
                     email: user.email,
-                    date: Date.now()
                 }
                 socket.current.send(JSON.stringify(msg))
             }
 
             socket.current.onmessage = (event) => {
                 const msg = JSON.parse(event.data)
-                setMessages(prev => [msg, ...prev])
+                if (msg.event === 'get-all-messages') {
+                    setMessages([...msg.messages])
+                } else {
+                    console.log(msg, ' ! message !')
+                    setMessages(prev => [msg, ...prev])
+                }
             }
 
             socket.current.onclose = () => {
@@ -50,9 +55,9 @@ export default function Chat({ user }) {
                 <div className="chat-inner">
                     {messages.map((msg) =>
                     <div className="chat__message"
-                         key={msg.date}>
+                         key={msg.id}>
                         <span className="chat__message__time">
-                            [{new Date(parseInt(msg.date)).getHours()}:{new Date(parseInt(msg.date)).getMinutes()}]
+                            [{new Date(msg.created_at).toTimeString().split(' ')[0]}]
                         </span>
                         {
                             msg.event === 'connection' ? <span><span className="chat__message__author">{msg.email}</span> entered chat!</span>

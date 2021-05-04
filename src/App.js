@@ -24,7 +24,8 @@ function App() {
         setLoading(true)
         http.get('current-user').then(res => {
             if (res && res.data) {
-                setUser(res.data)
+                const { id, email, role } = res.data
+                setUser({ id, email, role })
             }
         }).catch(err => {
             if (err) {
