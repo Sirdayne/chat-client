@@ -7,10 +7,15 @@ const TIMEOUT = 5 * 60 * 1000
 const http = axios.create({
     baseURL: BASE_URL,
     timeout: TIMEOUT,
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${auth.getToken()}`
-    },
 })
+
+http.interceptors.request.use(function (config) {
+    if (auth.getToken) {
+        config.headers['Authorization'] = `Bearer ${auth.getToken()}`;
+    }
+    return config;
+}, function (error) {
+    return Promise.reject(error);
+});
 
 export default http
