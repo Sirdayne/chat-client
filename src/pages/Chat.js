@@ -1,4 +1,6 @@
 import {useState, useEffect, useRef} from 'react'
+import http from '../services/http'
+import randomColor from 'randomcolor'
 
 export default function Chat({ user }) {
     const [inputValue, setInputValue] = useState('')
@@ -14,6 +16,12 @@ export default function Chat({ user }) {
         }
         socket.current.send(JSON.stringify(msg))
         setInputValue('')
+    }
+
+    function handleKeyPress(event) {
+        if (event.key === 'Enter'){
+            sendMessage()
+        }
     }
 
     useEffect(() => {
@@ -48,6 +56,13 @@ export default function Chat({ user }) {
         }
     }, [user])
 
+    function updateColor() {
+        const color = randomColor()
+        http.put(`/user_color/${user.id}`, { color }).then(() => {
+
+        })
+    }
+
     return (
         <div className="chat">
             <div className="chat-container">
@@ -59,18 +74,24 @@ export default function Chat({ user }) {
                             [{new Date(msg.created_at).toTimeString().slice(0, 5)}]
                         </span>
                         {
-                            msg.event === 'connection' ? <span><span className="chat__message__author">{msg.email}</span> entered chat!</span>
-                            : <span><span className="chat__message__author">{msg.email}: </span>{msg.message}</span>
+                            msg.event === 'connection' ? <span><span className="chat__message__author" style={{color: msg.color}}>{msg.email}</span> entered chat!</span>
+                            : <span><span className="chat__message__author" style={{color: msg.color}}>{msg.email}: </span>{msg.message}</span>
                         }
                     </div>)}
                 </div>
                 <div className="chat-input">
                     <input value={inputValue}
                            onChange={e => {setInputValue(e.target.value)}}
+                           onKeyPress={handleKeyPress}
                            type="text"/>
-                    <button className="btn"
+                    <button className="ch-btn"
                             disabled={inputValue.length === 0 || inputValue.length > 100}
                             onClick={(e) => sendMessage()}>SEND</button>
+                </div>
+
+                <div className="chat-color-picker">
+                    <button className="ch-btn"
+                            onClick={(e) => updateColor()}>RANDOM COLOR</button>
                 </div>
             </div>
         </div>

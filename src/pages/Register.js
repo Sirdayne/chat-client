@@ -1,8 +1,9 @@
 import {useState} from 'react'
-import {validateEmail} from "../services/utils";
-import auth from "../services/auth";
-import { Redirect } from "react-router-dom";
-import httpAuth from '../services/httpAuth';
+import {validateEmail} from "../services/utils"
+import auth from "../services/auth"
+import { Link, Redirect } from "react-router-dom"
+import httpAuth from '../services/httpAuth'
+import randomColor  from 'randomcolor'
 
 export default function Register({ setUser }) {
     const [formEmail, setFormEmail] = useState('')
@@ -14,9 +15,10 @@ export default function Register({ setUser }) {
 
     function register() {
         setTouched(true)
+        const color = randomColor()
         if (isValid()) {
             const body = {
-                email: formEmail, password
+                email: formEmail, password, color
             }
             httpAuth.post('register', body).then(res => {
                 const { token, id, email, role } = res.data
@@ -34,7 +36,12 @@ export default function Register({ setUser }) {
     return (
         redirect ? <Redirect to="/" push={true}/>
         : <div className="register">
-            <div>
+            <div className="register-container">
+                <div className="register-link">
+                    Already have account?
+                    <Link to="/login">Sign in</Link>
+                </div>
+
                 <div className="register__label">Email</div>
                 <input value={formEmail}
                        onChange={e => {setFormEmail(e.target.value)}}
@@ -58,7 +65,7 @@ export default function Register({ setUser }) {
                 </div>}
 
                 <div className="register__btn">
-                    <button className="btn"
+                    <button className="ch-btn"
                             onClick={(e) => register()}>REGISTER</button>
                 </div>
             </div>
