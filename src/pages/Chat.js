@@ -1,10 +1,12 @@
 import {useState, useEffect, useRef} from 'react'
 import http from '../services/http'
-import randomColor from 'randomcolor'
+// import randomColor from 'randomcolor'
+import { HuePicker} from "react-color"
 
 export default function Chat({ user }) {
     const [inputValue, setInputValue] = useState('')
     const [messages, setMessages] = useState([])
+    const [currentColor, setCurrentColor] = useState(user.color)
     const socket = useRef()
 
     function sendMessage() {
@@ -27,7 +29,6 @@ export default function Chat({ user }) {
     useEffect(() => {
         if (user && user.email) {
             socket.current = new WebSocket(process.env.REACT_APP_WS)
-
             socket.current.onopen = () => {
                 const msg = {
                     event: 'connection',
@@ -36,7 +37,6 @@ export default function Chat({ user }) {
                 }
                 socket.current.send(JSON.stringify(msg))
             }
-
             socket.current.onmessage = (event) => {
                 const msg = JSON.parse(event.data)
                 if (msg.event === 'get-all-messages') {
@@ -45,22 +45,17 @@ export default function Chat({ user }) {
                     setMessages(prev => [msg, ...prev])
                 }
             }
-
-            socket.current.onclose = () => {
-
-            }
-
-            socket.current.onerror = () => {
-
-            }
+            socket.current.onclose = () => {}
+            socket.current.onerror = () => {}
         }
     }, [user])
 
-    function updateColor() {
-        const color = randomColor()
-        http.put(`/user_color/${user.id}`, { color }).then(() => {
+    function updateColor(color) {
+        setCurrentColor(color.hex);
+    }
 
-        })
+    function sendUpdatedColor() {
+        http.put(`/user_color/${user.id}`, { color: currentColor }).then(() => {})
     }
 
     return (
@@ -90,8 +85,12 @@ export default function Chat({ user }) {
                 </div>
 
                 <div className="chat-color-picker">
+                    <HuePicker
+                        color={currentColor}
+                        onChangeComplete={(color) => {updateColor(color)}}
+                    />
                     <button className="ch-btn"
-                            onClick={(e) => updateColor()}>RANDOM COLOR</button>
+                            onClick={(e) => sendUpdatedColor()}>UPDATE COLOR</button>
                 </div>
             </div>
         </div>

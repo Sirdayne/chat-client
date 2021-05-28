@@ -21,9 +21,9 @@ export default function Register({ setUser }) {
                 email: formEmail, password, color
             }
             httpAuth.post('register', body).then(res => {
-                const { token, id, email, role } = res.data
+                const { token, id, email, role, color } = res.data
                 auth.setToken(token)
-                setUser({ id, email: email, role })
+                setUser({ id, email: email, role, color })
                 setRedirect(true)
             })
         }

@@ -18,9 +18,9 @@ export default function Login({ setUser }) {
                 email: formEmail, password
             }
             httpAuth.post('login', body).then(res => {
-                const { token, id, email, role } = res.data
+                const { token, id, email, role, color } = res.data
                 auth.setToken(token)
-                setUser({ id, email, role })
+                setUser({ id, email, role, color })
                 setRedirect(true)
             }).catch(() => {
                 setAuthError(true)
